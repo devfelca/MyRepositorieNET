@@ -1,0 +1,25 @@
+
+# Build 
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Arquivos temporários
+*.tmp
+*.log
+*.vs/
+
+# Configurações locais
+.vscode/
+*.swp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Outros
+*.bak
+*.orig

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solicitação de Serviços Internos — GPQ</title>
+  <style>
+    /*TOKENS*/
+    :root {
+      --bg:         #0d0f14;
+      --surface:    #151820;
+      --border:     #252a35;
+      --accent:     #e8c877;
+      --accent-dim: #b8993a;
+      --text:       #e8e9ed;
+      --text-muted: #6b7280;
+      --error:      #f07070;
+      --success:    #6fcfa0;
+      --radius:     10px;
+      --mono:       ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans:       system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --serif:      ui-serif, Georgia, Times, "Times New Roman", serif;
+    }
+
+    /* RESET*/
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    /*HEADER */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeDown .6s ease both;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .7rem;
+      letter-spacing: .12em;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: .25rem .75rem;
+      border-radius: 99px;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: .5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: .95rem;
+      font-weight: 300;
+    }
+
+    /*CARD*/
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 560px;
+      animation: fadeUp .6s .15s ease both;
+    }
+
+    /*FORM */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: .45rem;
+      margin-bottom: 1.4rem;
+    }
+
+    label {
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    label span.req { color: var(--accent); margin-left: 2px; }
+
+    input, select, textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: .95rem;
+      padding: .7rem .9rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+
+    textarea { resize: vertical; min-height: 90px; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 3px rgba(232,200,119,.12);
+    }
+
+    /* invalid state */
+    input.invalid, select.invalid, textarea.invalid {
+      border-color: var(--error) !important;
+      box-shadow: 0 0 0 3px rgba(240,112,112,.12) !important;
+    }
+
+    .field-error {
+      font-size: .78rem;
+      color: var(--error);
+      min-height: 1em;
+      transition: opacity .2s;
+    }
+
+    /* BUTTON  */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      padding: .85rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #0d0f14;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: .02em;
+      transition: background .2s, transform .1s;
+      margin-top: .5rem;
+    }
+
+    .btn:hover  { background: #f5d98c; }
+    .btn:active { transform: scale(.98); }
+
+    /*GLOBAL ERROR BANNER */
+    #msg-erro {
+      display: none;
+      background: rgba(240,112,112,.08);
+      border: 1px solid rgba(240,112,112,.3);
+      border-radius: 8px;
+      color: var(--error);
+      font-size: .88rem;
+      padding: .8rem 1rem;
+      margin-bottom: 1.5rem;
+      animation: shake .4s ease;
+    }
+
+    /* RESUMO*/
+    #resumo {
+      display: none;
+      width: 100%;
+      max-width: 560px;
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+
+    .resumo-header {
+      background: var(--accent);
+      color: #0d0f14;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .resumo-header h2 {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+    }
+
+    .resumo-protocolo {
+      font-family: var(--mono);
+      font-size: .75rem;
+      font-weight: 500;
+      background: rgba(0,0,0,.15);
+      padding: .3rem .65rem;
+      border-radius: 99px;
+    }
+
+    .resumo-body {
+      background: var(--surface);
+      padding: 1.5rem;
+    }
+
+    .resumo-row {
+      display: flex;
+      flex-direction: column;
+      padding: .7rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .resumo-row:last-child { border-bottom: none; }
+
+    .resumo-label {
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+
+    .resumo-value {
+      font-size: .97rem;
+      color: var(--text);
+    }
+
+    .resumo-footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /*ANIMATIONS*/
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60%  { transform: translateX(-5px); }
+      40%, 80%  { transform: translateX(5px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Solicitação de Serviços Internos</h1>
+    <div id="msg-erro" class="error"></div>
+    <div class="field">
+      <label for="nome">Nome do Solicitante *</label>
+      <input type="text" id="nome" />
+      <span class="error" id="erro-nome"></span>
+    </div>
+    <div class="field">
+      <label for="tipo">Tipo de Serviço *</label>
+      <select id="tipo">
+        <option value="">Selecione...</option>
+        <option>Suporte de TI</option>
+        <option>Manutenção Predial</option>
+        <option>Recursos Humanos</option>
+        <option>Financeiro</option>
+        <option>Jurídico</option>
+        <option>Comunicação</option>
+        <option>Logística</option>
+        <option>Outro</option>
+      </select>
+      <span class="error" id="erro-tipo"></span>
+    </div>
+    <div class="field">
+      <label for="descricao">Descrição do Serviço *</label>
+      <textarea id="descricao"></textarea>
+      <span class="error" id="erro-descricao"></span>
+    </div>
+    <div class="field">
+      <label for="setor">Setor Solicitante *</label>
+      <input type="text" id="setor" />
+      <span class="error" id="erro-setor"></span>
+    </div>
+    <button class="btn" onclick="enviarFormulario()">Enviar Solicitação</button>
+  </div>
+  <div id="resumo"></div>
+
+  <!-- ════════ JAVASCRIPT ════════ -->
+  <script>
+    let contadorProtocolo = parseInt(localStorage.getItem('protocolo') || '0', 10);
+    function gerarProtocolo() {
+      contadorProtocolo++;
+      localStorage.setItem('protocolo', contadorProtocolo);
+      const ano = new Date().getFullYear();
+      return `SERV-${String(contadorProtocolo).padStart(4, '0')}/${ano}`;
+    }
+    function limparErro(id) {
+      document.getElementById(id).classList.remove('invalid');
+      document.getElementById('erro-' + id).textContent = '';
+    }
+    ['nome', 'tipo', 'descricao', 'setor'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => limparErro(id));
+      document.getElementById(id).addEventListener('change', () => limparErro(id));
+    });
+    function validarCampos() {
+      let valido = true;
+      let faltantes = [];
+      [
+        { id: 'nome', label: 'Nome' },
+        { id: 'tipo', label: 'Tipo de Serviço' },
+        { id: 'descricao', label: 'Descrição' },
+        { id: 'setor', label: 'Setor' }
+      ].forEach(({ id, label }) => {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) {
+          el.classList.add('invalid');
+          document.getElementById('erro-' + id).textContent = label + ' é obrigatório.';
+          faltantes.push(label);
+          valido = false;
+        }
+      });
+      const banner = document.getElementById('msg-erro');
+      if (!valido) {
+        banner.textContent = 'Preencha: ' + faltantes.join(', ');
+      } else {
+        banner.textContent = '';
+      }
+      return valido;
+    }
+    function exibirResumo(dados) {
+      const protocolo = gerarProtocolo();
+      const agora = new Date();
+      const dataFormatada = agora.toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+      document.getElementById('resumo').innerHTML = `
+        <h2>Solicitação Registrada</h2>
+        <div><b>Protocolo:</b> ${protocolo}</div>
+        <div><b>Solicitante:</b> ${dados.nome}</div>
+        <div><b>Tipo:</b> ${dados.tipo}</div>
+        <div><b>Descrição:</b> ${dados.descricao}</div>
+        <div><b>Setor:</b> ${dados.setor}</div>
+        <div><b>Data:</b> ${dataFormatada}</div>
+        <div>Status: <strong>Pendente de aprovação</strong></div>
+      `;
+      document.getElementById('resumo').style.display = 'block';
+      document.getElementById('resumo').scrollIntoView({ behavior: 'smooth' });
+    }
+    function enviarFormulario() {
+      if (!validarCampos()) return;
+      const dados = {
+        nome: document.getElementById('nome').value.trim(),
+        tipo: document.getElementById('tipo').value.trim(),
+        descricao: document.getElementById('descricao').value.trim(),
+        setor: document.getElementById('setor').value.trim()
+      };
+      exibirResumo(dados);
+    }
+  </script>
+</body>
+</html>

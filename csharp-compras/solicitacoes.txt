@@ -1,0 +1,8 @@
+Ana Lima;Notebook Dell;2;Alta
+Carlos Mendes;Mouse sem fio;5;Baixa
+Fernanda Costa;Cadeira ergonômica;3;Media
+João Silva;Monitor 24 polegadas;1;Alta
+Beatriz Rocha;Teclado mecânico;4;Media
+Lucas Pereira;Webcam Full HD;2;Baixa
+Mariana Torres;Headset USB;6;Alta
+Roberto Alves;Hub USB-C;3;Media
